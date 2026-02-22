@@ -27,6 +27,8 @@ LegacyPwnWeb 是一个专为 32 位旧版 iOS 设备（iOS 8.0 - 9.3.6）设计�
 LegacyPwnWeb/
 ├── index.html                   # 现代化深色主题仪表盘 (UI 前端)
 └── assets/
+    ├── css/                     # 样式文件目录
+    │   └── style.css            # 全局样式表文件
     ├── certs/                   # 证书文件目录
     │   └── beeg.mobileconfig    # 越狱必备的信任证书文件
     ├── js/
