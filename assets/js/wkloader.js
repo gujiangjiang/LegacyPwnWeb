@@ -311,14 +311,15 @@ wkloader.exec = function(target) {
 wkloader.run = function(payloadName) {
     wkloader.log("starting " + payloadName + "...");
     
-    // 动态拼接载荷路径，指向 payloads 目录
-    var target = wkloader.download("assets/payloads/" + payloadName + ".b64"); 
-
+    // 优化：先执行底层初始化与版本检测，只有通过检测才去下载业务载荷，减轻服务器压力
     if (!wkloader.init()) {
-        wkloader.log("failed to init webkit loader");
-        // 这里的 alert 可以移除或保留，因为在 init 内部我们已经给出了详细的拦截弹窗
+        wkloader.log("failed to init webkit loader or unsupported device");
         return;
     }
+
+    wkloader.log("downloading payload...");
+    // 动态拼接载荷路径，指向 payloads 目录
+    var target = wkloader.download("assets/payloads/" + payloadName + ".b64"); 
 
     // 提示用户正在执行
     wkloader.log("executing payload...");
