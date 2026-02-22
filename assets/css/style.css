@@ -82,6 +82,16 @@ body {
     transform: scale(0.96);
     background-color: #2c2c2e;
 }
+
+/* 新增：被禁用的操作卡片样式（视觉置灰并强制取消点击反馈） */
+.action-card.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    -webkit-transform: none !important;
+    transform: none !important;
+    background-color: #1c1c1e !important;
+}
+
 .action-card h2 {
     font-size: 20px;
     margin: 0 0 8px 0;

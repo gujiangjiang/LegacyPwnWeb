@@ -1,6 +1,9 @@
 // 记录当前准备执行的漏洞载荷名称
 var currentPayload = '';
 
+// 新增：全局设备支持状态标志
+var isDeviceSupportedGlobal = true;
+
 // 定义不同操作的弹窗文案配置（使用 var 提升旧版 iOS Safari 兼容性）
 var modalConfigs = {
     // 新增：独立的设备支持信息弹窗配置，用于首页全局点击展示
@@ -48,6 +51,11 @@ var modalConfigs = {
 
 // 显示弹窗函数
 function showModal(payloadName) {
+    // 新增：如果设备不支持，且点击的不是“支持信息”弹窗，则直接拦截点击事件
+    if (!isDeviceSupportedGlobal && payloadName !== 'supportInfo') {
+        return;
+    }
+
     currentPayload = payloadName;
     var config = modalConfigs[payloadName];
     
@@ -161,8 +169,7 @@ function checkDeviceInfo() {
         deviceType = "非 iOS 设备";
     }
 
-    // 3. 渲染结果到页面（注：受限于浏览器 UA 机制，无法精准区分具体机型如 iPhone 4S 还是 5）
-    // 优化：将详情弹窗触发事件绑定到状态标签上
+    // 3. 渲染结果到页面并更新全局状态
     var infoEl = document.getElementById("deviceInfo");
     if (infoEl) {
         var clickAction = ' onclick="showModal(\'supportInfo\')"';
@@ -170,11 +177,25 @@ function checkDeviceInfo() {
             var displayStr = "当前：" + deviceType + " (iOS " + osVersion + ")";
             if (isSupported) {
                 infoEl.innerHTML = displayStr + ' <span class="status-ok"' + clickAction + '>[✅ 系统兼容 ℹ️]</span>';
+                isDeviceSupportedGlobal = true;
             } else {
                 infoEl.innerHTML = displayStr + ' <span class="status-err"' + clickAction + '>[⚠️ 版本不兼容 ℹ️]</span>';
+                isDeviceSupportedGlobal = false;
             }
         } else {
             infoEl.innerHTML = "当前：" + deviceType + ' <span class="status-err"' + clickAction + '>[⚠️ 完全不支持 ℹ️]</span>';
+            isDeviceSupportedGlobal = false;
+        }
+    }
+
+    // 新增：如果设备不支持，则将所有操作卡片视觉上置为禁用状态
+    if (!isDeviceSupportedGlobal) {
+        var cards = document.getElementsByClassName('action-card');
+        for (var i = 0; i < cards.length; i++) {
+            // 确保不重复添加 disabled 类名
+            if (cards[i].className.indexOf('disabled') === -1) {
+                cards[i].className += ' disabled';
+            }
         }
     }
 }
