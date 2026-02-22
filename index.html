@@ -125,7 +125,8 @@
                 
                 if (!hasCert) {
                     // 用户选择未安装，重定向去下载证书文件
-                    window.location.href = "beeg.mobileconfig";
+                    // 修改：将证书请求路径更新为 assets/certs 目录下更合理的分类
+                    window.location.href = "assets/certs/beeg.mobileconfig";
                     return;
                 }
             }
