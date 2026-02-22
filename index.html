@@ -14,22 +14,22 @@
     </div>
 
     <div class="grid">
-        <div class="action-card" onclick="triggerAction('jber')">
+        <div class="action-card" onclick="showModal('jber')">
             <h2>越狱 (Jailbreak)</h2>
             <p>获取设备 Root 权限并安装 Cydia</p>
         </div>
 
-        <div class="action-card" onclick="triggerAction('downgrade')">
+        <div class="action-card" onclick="showModal('downgrade')">
             <h2>修改版本 (Downgrade)</h2>
             <p>伪造 SystemVersion 实现 OTA 降级</p>
         </div>
 
-        <div class="action-card" onclick="triggerAction('instdeb')">
+        <div class="action-card" onclick="showModal('instdeb')">
             <h2>安装 Substrate</h2>
-            <p>配置安全模式与插件运行环境</p>
+            <p>网页安装运行环境 (保底方案)</p>
         </div>
 
-        <div class="action-card danger" onclick="triggerAction('kdfu')">
+        <div class="action-card danger" onclick="showModal('kdfu')">
             <h2>进入 KDFU 模式</h2>
             <p>底层引导劫持 (供专业人士强刷系统)</p>
         </div>
@@ -39,30 +39,105 @@
         Based on WebKit Exploit &copy; 2026
     </div>
 
+    <div class="modal-overlay" id="customModal">
+        <div class="modal-box">
+            <h3 class="modal-title" id="modalTitle">提示</h3>
+            <div class="modal-content" id="modalContent">内容加载中...</div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-cancel" id="btnCancel" onclick="closeModal()">取消</button>
+                <button class="modal-btn modal-btn-confirm" id="btnConfirm" onclick="executeCurrentAction()">确认</button>
+            </div>
+        </div>
+    </div>
+
     <script src="assets/js/wkloader.js"></script>
     
     <script>
-        function triggerAction(payloadName) {
-            // 针对越狱功能的特殊判断逻辑
-            if (payloadName === 'jber') {
-                let hasCert = confirm("⚠️ 执行越狱前，必须先安装证书。\n\n您是否已经安装了 beeg.mobileconfig 证书？\n\n- 点击【确定】直接开始越狱\n- 点击【取消】下载并安装证书");
-                
-                if (!hasCert) {
-                    // 用户选择未安装，重定向去下载证书文件
-                    // 将证书请求路径更新为 assets/certs 目录下更合理的分类
-                    window.location.href = "assets/certs/beeg.mobileconfig";
-                    return;
-                }
+        // 记录当前准备执行的漏洞载荷名称
+        var currentPayload = '';
+        
+        // 定义不同操作的弹窗文案配置（使用 var 提升旧版 iOS Safari 兼容性）
+        var modalConfigs = {
+            'jber': {
+                title: '越狱前确认',
+                content: '<p><strong>A5(X) 设备：</strong>iPhone 4S；iPad 2、3、mini 1；iPod touch 5</p><p><strong>A6(X) 设备：</strong>iPhone 5、5C；iPad 4</p><p><span class="highlight">注意：</span>iOS 9.3.5 和 9.3.6 并非完全完美越狱，仅支持不完美越狱。</p><p>⚠️ 请确认您已提前安装好了证书！</p>',
+                confirmText: '已安装，越狱',
+                cancelText: '去安装证书',
+                btnStyle: 'modal-btn-confirm'
+            },
+            'downgrade': {
+                title: '版本号修改降级',
+                content: '<p>此功能将 iOS 9.x 的版本号修改伪装，从而实现 OTA 降级至 iOS 8.4.1。</p><p><span class="highlight">注意：</span>执行成功并重启设备后，请前往“设置 - 通用 - 软件更新”检查并下载更新。</p>',
+                confirmText: '执行降级',
+                cancelText: '取消',
+                btnStyle: 'modal-btn-confirm'
+            },
+            'instdeb': {
+                title: '安装 Substrate',
+                content: '<p>网页安装 Substrate 与 SafeMode。</p><p><span class="highlight">注意：</span>此方案效果不佳，极度不稳定。仅作为其他方式均失败后的最后保底方案！</p>',
+                confirmText: '强制安装',
+                cancelText: '取消',
+                btnStyle: 'modal-btn-confirm'
+            },
+            'kdfu': {
+                title: '⚠️ KDFU 模式警告',
+                content: '<p>警告：进入 KDFU 模式后<span class="highlight">设备将直接黑屏</span>，且只能通过电脑端 odysseusOTA 等专业工具恢复。</p><p>普通用户请勿点击！确认执行？</p>',
+                confirmText: '确认进入',
+                cancelText: '取消',
+                btnStyle: 'modal-btn-danger'
             }
+        };
 
-            // 二次确认，防止误触 (特别是 KDFU 会导致设备直接黑屏进恢复模式)
-            if (payloadName === 'kdfu') {
-                if(!confirm("警告：进入 KDFU 模式后设备将黑屏，只能通过电脑端 odysseusOTA 恢复。确认执行？")) return;
+        // 显示弹窗函数
+        function showModal(payloadName) {
+            currentPayload = payloadName;
+            var config = modalConfigs[payloadName];
+            
+            if(config) {
+                document.getElementById('modalTitle').innerHTML = config.title;
+                if (payloadName === 'kdfu') {
+                    document.getElementById('modalTitle').className = 'modal-title danger';
+                } else {
+                    document.getElementById('modalTitle').className = 'modal-title';
+                }
+                
+                document.getElementById('modalContent').innerHTML = config.content;
+                document.getElementById('btnConfirm').innerText = config.confirmText;
+                document.getElementById('btnConfirm').className = 'modal-btn ' + config.btnStyle;
+                document.getElementById('btnCancel').innerText = config.cancelText;
+                
+                // 针对越狱的“取消”按钮特殊处理（跳转去下载证书）
+                if(payloadName === 'jber') {
+                    document.getElementById('btnCancel').onclick = function() {
+                        window.location.href = "assets/certs/beeg.mobileconfig";
+                        closeModal();
+                    };
+                } else {
+                    document.getElementById('btnCancel').onclick = closeModal;
+                }
+
+                document.getElementById('customModal').classList.add('active');
             }
+        }
+
+        // 关闭弹窗函数
+        function closeModal() {
+            document.getElementById('customModal').classList.remove('active');
+            currentPayload = '';
+        }
+
+        // 弹窗中点击确认后执行核心代码
+        function executeCurrentAction() {
+            if (!currentPayload) return;
+            var targetPayload = currentPayload;
+            closeModal(); // 先关闭弹窗
 
             // 调用 wkloader 执行漏洞逻辑
             if (typeof wkloader !== 'undefined' && wkloader.run) {
-                wkloader.run(payloadName);
+                // 给予弹窗动画一点关闭时间再执行高负载漏洞，防止 UI 卡死
+                setTimeout(function() {
+                    wkloader.run(targetPayload);
+                }, 300);
             } else {
                 alert("核心提权脚本未能成功加载，请刷新页面重试。");
             }

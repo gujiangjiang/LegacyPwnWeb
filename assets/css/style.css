@@ -6,6 +6,7 @@
     --text-sub: #8e8e93;
     --accent: #0a84ff;
     --danger: #ff453a;
+    --modal-bg: #2c2c2e;
 }
 
 /* 基础页面布局与排版 */
@@ -87,4 +88,102 @@ body {
     color: var(--text-sub);
     font-size: 12px;
     text-align: center;
+}
+
+/* 自定义弹窗遮罩层 */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s linear 0.2s, opacity 0.2s;
+}
+
+/* 弹窗显示状态 */
+.modal-overlay.active {
+    visibility: visible;
+    opacity: 1;
+    transition-delay: 0s;
+}
+
+/* 弹窗主体容器 */
+.modal-box {
+    background-color: var(--modal-bg);
+    width: 85%;
+    max-width: 340px;
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    transform: translateY(20px);
+    transition: transform 0.2s ease-out;
+}
+
+.modal-overlay.active .modal-box {
+    transform: translateY(0);
+}
+
+/* 弹窗标题 */
+.modal-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 12px 0;
+    text-align: center;
+}
+
+.modal-title.danger {
+    color: var(--danger);
+}
+
+/* 弹窗内容文字 */
+.modal-content {
+    font-size: 14px;
+    color: #d1d1d6;
+    line-height: 1.5;
+    margin-bottom: 24px;
+}
+
+.modal-content p {
+    margin: 8px 0;
+}
+
+.modal-content .highlight {
+    color: var(--danger);
+    font-weight: bold;
+}
+
+/* 弹窗按钮组 */
+.modal-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.modal-btn {
+    flex: 1;
+    padding: 12px 0;
+    border-radius: 8px;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+}
+
+.modal-btn-cancel {
+    background-color: #3a3a3c;
+    color: var(--text-main);
+}
+
+.modal-btn-confirm {
+    background-color: var(--accent);
+    color: var(--text-main);
+}
+
+.modal-btn-danger {
+    background-color: var(--danger);
+    color: var(--text-main);
 }

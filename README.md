@@ -6,9 +6,9 @@ LegacyPwnWeb 是一个专为 32 位旧版 iOS 设备（iOS 8.0 - 9.3.6）设计�
 
 ## ✨ 核心功能 (Features)
 
-* 🔓 **越狱 (Jailbreak):** 一键获取系统 Root 权限并部署 Cydia 运行环境。
-* ⬇️ **降级伪装 (Downgrade):** 动态修改 `SystemVersion.plist` 以欺骗 OTA 验证机制，实现降级。
-* 🧩 **基础环境配置 (Substrate):** 一键安装 Cydia Substrate 与 SafeMode，为插件运行提供底层支持。
+* 🔓 **越狱 (Jailbreak):** 一键获取系统 Root 权限并部署 Cydia 运行环境。（支持 A5-A6 设备，内置图文向导与证书检查弹窗）
+* ⬇️ **降级伪装 (Downgrade):** 动态修改 `SystemVersion.plist` 以欺骗 OTA 验证机制，实现平滑降级至 iOS 8.4.1。
+* 🧩 **基础环境配置 (Substrate):** 一键安装 Cydia Substrate 与 SafeMode。（作为常规安装失败后的网页端保底方案）
 * ⚠️ **特权恢复模式 (KDFU):** 通过劫持 BootROM 引导进入无视签名的 Pwned DFU 模式，供高级用户强刷自制固件。
 
 ## 📱 支持设备 (Supported Devices)
@@ -25,10 +25,10 @@ LegacyPwnWeb 是一个专为 32 位旧版 iOS 设备（iOS 8.0 - 9.3.6）设计�
 
 ```text
 LegacyPwnWeb/
-├── index.html                   # 现代化深色主题仪表盘 (UI 前端)
+├── index.html                   # 现代化深色主题仪表盘 (UI 前端，内置交互弹窗)
 └── assets/
     ├── css/                     # 样式文件目录
-    │   └── style.css            # 全局样式表文件
+    │   └── style.css            # 全局及弹窗组件样式表
     ├── certs/                   # 证书文件目录
     │   └── beeg.mobileconfig    # 越狱必备的信任证书文件
     ├── js/
