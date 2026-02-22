@@ -128,6 +128,14 @@ wkloader.init = function() {
     
     wkloader.version = [parseInt(version_info[1], 10), parseInt(version_info[2], 10), parseInt(version_info[3] || 0, 10)];
     if (wkloader.version[2] == undefined) wkloader.version[2] = 0;
+
+    // 【新增的优化代码】严格过滤非 iOS 8 和 9 的设备，防止去请求不存在的 loader.b64 文件
+    if (wkloader.version[0] !== 8 && wkloader.version[0] !== 9) {
+        wkloader.log("unsupported ios major version: " + wkloader.version[0]);
+        alert("⚠️ 运行被拦截\n\n当前设备的系统版本（iOS " + wkloader.version[0] + "）不受支持。\n核心漏洞仅支持在 iOS 8 和 iOS 9 下运行。");
+        return false;
+    }
+
     wkloader.log("running on ios: " + wkloader.version[0] + "." + wkloader.version[1] + "." + wkloader.version[2]);
     wkloader.log("user agent: " + window.navigator.userAgent);
 
@@ -308,7 +316,7 @@ wkloader.run = function(payloadName) {
 
     if (!wkloader.init()) {
         wkloader.log("failed to init webkit loader");
-        alert("设备或系统版本不受支持，初始化失败。");
+        // 这里的 alert 可以移除或保留，因为在 init 内部我们已经给出了详细的拦截弹窗
         return;
     }
 
