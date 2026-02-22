@@ -83,13 +83,15 @@ function showModal(payloadName) {
             btnCert.style.display = 'none';
         }
 
-        document.getElementById('customModal').classList.add('active');
+        // 极致兼容性优化：放弃 classList，改用最原始的 className 字符串覆盖
+        document.getElementById('customModal').className = 'modal-overlay active';
     }
 }
 
 // 关闭弹窗函数
 function closeModal() {
-    document.getElementById('customModal').classList.remove('active');
+    // 极致兼容性优化：恢复默认 class 隐藏弹窗
+    document.getElementById('customModal').className = 'modal-overlay';
     currentPayload = '';
 }
 
