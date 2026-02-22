@@ -45,6 +45,7 @@
             <div class="modal-content" id="modalContent">内容加载中...</div>
             <div class="modal-actions">
                 <button class="modal-btn modal-btn-cancel" id="btnCancel" onclick="closeModal()">取消</button>
+                <button class="modal-btn modal-btn-cancel" id="btnInstallCert" style="display: none;" onclick="installCert()">去安装证书</button>
                 <button class="modal-btn modal-btn-confirm" id="btnConfirm" onclick="executeCurrentAction()">确认</button>
             </div>
         </div>
@@ -60,10 +61,12 @@
         var modalConfigs = {
             'jber': {
                 title: '越狱前确认',
-                content: '<p><strong>A5(X) 设备：</strong>iPhone 4S；iPad 2、3、mini 1；iPod touch 5</p><p><strong>A6(X) 设备：</strong>iPhone 5、5C；iPad 4</p><p><span class="highlight">注意：</span>iOS 9.3.5 和 9.3.6 并非完全完美越狱，仅支持不完美越狱。</p><p>⚠️ 请确认您已提前安装好了证书！</p>',
+                // 优化：重新排版了设备与系统版本支持的说明文本
+                content: '<p><strong>支持的设备和 iOS 版本：</strong><br>系统版本：iOS 8.0 - 9.3.6<br>A5(X) 设备：iPhone 4S；iPad 2、3、mini 1；iPod touch 5<br>A6(X) 设备：iPhone 5、5C；iPad 4</p><p><span class="highlight">注意：</span>iOS 9.3.5 和 9.3.6 并非完全完美越狱，仅支持不完美越狱。</p><p>⚠️ 请确认您已提前安装好了证书！</p>',
                 confirmText: '已安装，越狱',
-                cancelText: '去安装证书',
-                btnStyle: 'modal-btn-confirm'
+                cancelText: '取消', // 优化：恢复正常的取消文案
+                btnStyle: 'modal-btn-confirm',
+                showCertBtn: true // 新增：标识在此弹窗中需要显示“去安装证书”按钮
             },
             'downgrade': {
                 title: '版本号修改降级',
@@ -104,16 +107,17 @@
                 document.getElementById('modalContent').innerHTML = config.content;
                 document.getElementById('btnConfirm').innerText = config.confirmText;
                 document.getElementById('btnConfirm').className = 'modal-btn ' + config.btnStyle;
-                document.getElementById('btnCancel').innerText = config.cancelText;
                 
-                // 针对越狱的“取消”按钮特殊处理（跳转去下载证书）
-                if(payloadName === 'jber') {
-                    document.getElementById('btnCancel').onclick = function() {
-                        window.location.href = "assets/certs/beeg.mobileconfig";
-                        closeModal();
-                    };
+                // 优化：统一将 btnCancel 的行为设置为关闭弹窗
+                document.getElementById('btnCancel').innerText = config.cancelText || '取消';
+                document.getElementById('btnCancel').onclick = closeModal;
+
+                // 新增：判断是否需要显示“去安装证书”的独立按钮
+                var btnCert = document.getElementById('btnInstallCert');
+                if(config.showCertBtn) {
+                    btnCert.style.display = 'inline-block';
                 } else {
-                    document.getElementById('btnCancel').onclick = closeModal;
+                    btnCert.style.display = 'none';
                 }
 
                 document.getElementById('customModal').classList.add('active');
@@ -124,6 +128,12 @@
         function closeModal() {
             document.getElementById('customModal').classList.remove('active');
             currentPayload = '';
+        }
+
+        // 新增：独立的去安装证书逻辑函数
+        function installCert() {
+            window.location.href = "assets/certs/beeg.mobileconfig";
+            closeModal();
         }
 
         // 弹窗中点击确认后执行核心代码
