@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>iOS 终极工具箱</title>
+    <style>
+        :root {
+            --bg-color: #000000;
+            --card-bg: #1c1c1e;
+            --text-main: #ffffff;
+            --text-sub: #8e8e93;
+            --accent: #0a84ff;
+            --danger: #ff453a;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .header {
+            text-align: center;
+            margin-top: 40px;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            letter-spacing: 0.5px;
+        }
+        .header p {
+            color: var(--text-sub);
+            font-size: 15px;
+            margin: 0;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            width: 100%;
+            max-width: 400px;
+        }
+        .action-card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .action-card:active {
+            transform: scale(0.96);
+            background-color: #2c2c2e;
+        }
+        .action-card h2 {
+            font-size: 20px;
+            margin: 0 0 8px 0;
+            color: var(--accent);
+        }
+        .action-card.danger h2 {
+            color: var(--danger);
+        }
+        .action-card p {
+            font-size: 14px;
+            color: var(--text-sub);
+            margin: 0;
+        }
+        .footer {
+            margin-top: auto;
+            padding: 20px 0;
+            color: var(--text-sub);
+            font-size: 12px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>iOS 工具箱</h1>
+        <p>支持 32 位设备 (iOS 8.0 - 9.3.6)</p>
+    </div>
+
+    <div class="grid">
+        <div class="action-card" onclick="triggerAction('jber')">
+            <h2>越狱 (Jailbreak)</h2>
+            <p>获取设备 Root 权限并安装 Cydia</p>
+        </div>
+
+        <div class="action-card" onclick="triggerAction('downgrade')">
+            <h2>修改版本 (Downgrade)</h2>
+            <p>伪造 SystemVersion 实现 OTA 降级</p>
+        </div>
+
+        <div class="action-card" onclick="triggerAction('instdeb')">
+            <h2>安装 Substrate</h2>
+            <p>配置安全模式与插件运行环境</p>
+        </div>
+
+        <div class="action-card danger" onclick="triggerAction('kdfu')">
+            <h2>进入 KDFU 模式</h2>
+            <p>底层引导劫持 (供专业人士强刷系统)</p>
+        </div>
+    </div>
+
+    <div class="footer">
+        Based on WebKit Exploit &copy; 2026
+    </div>
+
+    <script src="assets/js/wkloader.js"></script>
+    
+    <script>
+        function triggerAction(payloadName) {
+            // 针对越狱功能的特殊判断逻辑
+            if (payloadName === 'jber') {
+                let hasCert = confirm("⚠️ 执行越狱前，必须先安装证书。\n\n您是否已经安装了 beeg.mobileconfig 证书？\n\n- 点击【确定】直接开始越狱\n- 点击【取消】下载并安装证书");
+                
+                if (!hasCert) {
+                    // 用户选择未安装，重定向去下载证书文件
+                    window.location.href = "beeg.mobileconfig";
+                    return;
+                }
+            }
+
+            // 二次确认，防止误触 (特别是 KDFU 会导致设备直接黑屏进恢复模式)
+            if (payloadName === 'kdfu') {
+                if(!confirm("警告：进入 KDFU 模式后设备将黑屏，只能通过电脑端 odysseusOTA 恢复。确认执行？")) return;
+            }
+
+            // 调用 wkloader 执行漏洞逻辑
+            if (typeof wkloader !== 'undefined' && wkloader.run) {
+                wkloader.run(payloadName);
+            } else {
+                alert("核心提权脚本未能成功加载，请刷新页面重试。");
+            }
+        }
+    </script>
+</body>
+</html>
