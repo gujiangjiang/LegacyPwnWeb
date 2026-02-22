@@ -118,6 +118,14 @@ wkloader.init_offsets = function() {
 
 wkloader.init = function() {
     var version_info = (window.navigator.userAgent).match(/OS (\d+)_(\d+)_?(\d+)?/);
+    
+    // 【新增的防御性代码】如果没匹配到 iOS 版本，直接拦截并终止
+    if (!version_info) {
+        wkloader.log("failed to parse iOS version. current UA: " + window.navigator.userAgent);
+        alert("⚠️ 运行被拦截\n\n该工具仅支持在 iOS 设备的 Safari 浏览器中运行。\n请使用 iPhone、iPad 或 iPod touch 访问此页面。");
+        return false;
+    }
+    
     wkloader.version = [parseInt(version_info[1], 10), parseInt(version_info[2], 10), parseInt(version_info[3] || 0, 10)];
     if (wkloader.version[2] == undefined) wkloader.version[2] = 0;
     wkloader.log("running on ios: " + wkloader.version[0] + "." + wkloader.version[1] + "." + wkloader.version[2]);
