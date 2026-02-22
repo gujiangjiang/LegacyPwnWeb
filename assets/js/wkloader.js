@@ -119,20 +119,20 @@ wkloader.init_offsets = function() {
 wkloader.init = function() {
     var version_info = (window.navigator.userAgent).match(/OS (\d+)_(\d+)_?(\d+)?/);
     
-    // 【新增的防御性代码】如果没匹配到 iOS 版本，直接拦截并终止
+    // 【优化：中英双语拦截报错】如果没匹配到 iOS 版本，直接拦截并终止
     if (!version_info) {
         wkloader.log("failed to parse iOS version. current UA: " + window.navigator.userAgent);
-        alert("⚠️ 运行被拦截\n\n该工具仅支持在 iOS 设备的 Safari 浏览器中运行。\n请使用 iPhone、iPad 或 iPod touch 访问此页面。");
+        alert("⚠️ 运行被拦截 (Execution Blocked)\n\n该工具仅支持在 iOS 设备的 Safari 浏览器中运行。\nThis tool only supports Safari on iOS devices.");
         return false;
     }
     
     wkloader.version = [parseInt(version_info[1], 10), parseInt(version_info[2], 10), parseInt(version_info[3] || 0, 10)];
     if (wkloader.version[2] == undefined) wkloader.version[2] = 0;
 
-    // 【新增的优化代码】严格过滤非 iOS 8 和 9 的设备，防止去请求不存在的 loader.b64 文件
+    // 【优化：中英双语拦截报错】严格过滤非 iOS 8 和 9 的设备，防止去请求不存在的 loader.b64 文件
     if (wkloader.version[0] !== 8 && wkloader.version[0] !== 9) {
         wkloader.log("unsupported ios major version: " + wkloader.version[0]);
-        alert("⚠️ 运行被拦截\n\n当前设备的系统版本（iOS " + wkloader.version[0] + "）不受支持。\n核心漏洞仅支持在 iOS 8 和 iOS 9 下运行。");
+        alert("⚠️ 运行被拦截 (Execution Blocked)\n\n当前设备的系统版本（iOS " + wkloader.version[0] + "）不受支持。核心漏洞仅支持 iOS 8/9。\nCurrent iOS version is unsupported. Exploit only works on iOS 8/9.");
         return false;
     }
 
@@ -311,7 +311,7 @@ wkloader.exec = function(target) {
 wkloader.run = function(payloadName) {
     wkloader.log("starting " + payloadName + "...");
     
-    // 优化：先执行底层初始化与版本检测，只有通过检测才去下载业务载荷，减轻服务器压力
+    // 先执行底层初始化与版本检测，只有通过检测才去下载业务载荷，减轻服务器压力
     if (!wkloader.init()) {
         wkloader.log("failed to init webkit loader or unsupported device");
         return;

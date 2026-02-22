@@ -8,47 +8,49 @@
 </head>
 <body>
 
+    <div id="langSwitchBtn" class="lang-switch" onclick="toggleLanguage()" data-i18n="langBtn">🌐 EN</div>
+
     <div class="header">
-        <h1>iOS 工具箱</h1>
-        <p>支持 32 位设备 (iOS 8.0 - 9.3.6)</p>
+        <h1 data-i18n="appTitle">iOS 工具箱</h1>
+        <p><span data-i18n="appSubtitle">支持 32 位设备 (iOS 8.0 - 9.3.6)</span></p>
         
-        <div id="deviceInfo" class="device-badge">正在检测设备环境...</div>
+        <div id="deviceInfo" class="device-badge" data-i18n="detecting">正在检测设备环境...</div>
     </div>
 
     <div class="grid">
         <div class="action-card" onclick="showModal('jber')">
-            <h2>越狱 (Jailbreak)</h2>
-            <p>获取设备 Root 权限并安装 Cydia</p>
+            <h2 data-i18n="jbTitle">越狱 (Jailbreak)</h2>
+            <p data-i18n="jbDesc">获取设备 Root 权限并安装 Cydia</p>
         </div>
 
         <div class="action-card" onclick="showModal('downgrade')">
-            <h2>修改版本 (Downgrade)</h2>
-            <p>伪造 SystemVersion 实现 OTA 降级</p>
+            <h2 data-i18n="dgTitle">修改版本 (Downgrade)</h2>
+            <p data-i18n="dgDesc">伪造 SystemVersion 实现 OTA 降级</p>
         </div>
 
         <div class="action-card" onclick="showModal('instdeb')">
-            <h2>安装 Substrate</h2>
-            <p>网页安装运行环境 (保底方案)</p>
+            <h2 data-i18n="sbTitle">安装 Substrate</h2>
+            <p data-i18n="sbDesc">网页安装运行环境 (保底方案)</p>
         </div>
 
         <div class="action-card danger" onclick="showModal('kdfu')">
-            <h2>进入 KDFU 模式</h2>
-            <p>底层引导劫持 (供专业人士强刷系统)</p>
+            <h2 data-i18n="kdfuTitle">进入 KDFU 模式</h2>
+            <p data-i18n="kdfuDesc">底层引导劫持 (供专业人士强刷系统)</p>
         </div>
     </div>
 
-    <div class="footer">
+    <div class="footer" data-i18n="footer">
         Based on WebKit Exploit &copy; 2026
     </div>
 
     <div class="modal-overlay" id="customModal">
         <div class="modal-box">
-            <h3 class="modal-title" id="modalTitle">提示</h3>
+            <h3 class="modal-title" id="modalTitle" data-i18n="modalTitleTip">提示</h3>
             <div class="modal-content" id="modalContent">内容加载中...</div>
             <div class="modal-actions">
-                <button class="modal-btn modal-btn-cancel" id="btnCancel" onclick="closeModal()">取消</button>
-                <button class="modal-btn modal-btn-cancel" id="btnInstallCert" style="display: none;" onclick="installCert()">去安装证书</button>
-                <button class="modal-btn modal-btn-confirm" id="btnConfirm" onclick="executeCurrentAction()">确认</button>
+                <button class="modal-btn modal-btn-cancel" id="btnCancel" onclick="closeModal()" data-i18n="btnCancel">取消</button>
+                <button class="modal-btn modal-btn-cancel" id="btnInstallCert" style="display: none;" onclick="installCert()" data-i18n="btnInstallCert">去安装证书</button>
+                <button class="modal-btn modal-btn-confirm" id="btnConfirm" onclick="executeCurrentAction()" data-i18n="btnConfirm">确认</button>
             </div>
         </div>
     </div>
