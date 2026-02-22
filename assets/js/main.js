@@ -122,3 +122,60 @@ function executeCurrentAction() {
         alert("核心提权脚本未能成功加载，请刷新页面重试。");
     }
 }
+
+// 新增：检测当前设备 UA 和系统版本，并与支持列表进行比对
+function checkDeviceInfo() {
+    var ua = navigator.userAgent;
+    var deviceType = "";
+    var osVersion = "";
+    var isSupported = false;
+    var isIOS = false;
+
+    // 1. 判断是否为 iOS 设备族
+    if (ua.indexOf("iPhone") > -1) { deviceType = "iPhone"; isIOS = true; }
+    else if (ua.indexOf("iPad") > -1) { deviceType = "iPad"; isIOS = true; }
+    else if (ua.indexOf("iPod") > -1) { deviceType = "iPod touch"; isIOS = true; }
+
+    // 2. 提取并判断系统版本
+    if (isIOS) {
+        // 正则匹配 OS 版本号，例如 "OS 9_3_5"
+        var match = ua.match(/OS (\d+)_(\d+)(?:_(\d+))?/);
+        if (match) {
+            var major = parseInt(match[1], 10);
+            var minor = parseInt(match[2], 10);
+            var patch = match[3] ? parseInt(match[3], 10) : 0;
+            osVersion = major + "." + minor + (patch > 0 ? "." + patch : "");
+
+            // 判断版本是否在 8.0 - 9.3.6 之间
+            if (major === 8 || (major === 9 && minor <= 3)) {
+                isSupported = true;
+                // 排除 9.3.7 及以上 (虽然理论上 iOS 9 官方只到 9.3.6)
+                if (major === 9 && minor === 3 && patch > 6) {
+                    isSupported = false;
+                }
+            }
+        } else {
+            osVersion = "未知版本";
+        }
+    } else {
+        deviceType = "非 iOS 设备";
+    }
+
+    // 3. 渲染结果到页面（注：受限于浏览器 UA 机制，无法精准区分具体机型如 iPhone 4S 还是 5）
+    var infoEl = document.getElementById("deviceInfo");
+    if (infoEl) {
+        if (isIOS) {
+            var displayStr = "当前：" + deviceType + " (iOS " + osVersion + ")";
+            if (isSupported) {
+                infoEl.innerHTML = displayStr + ' <span class="status-ok">[✅ 系统兼容]</span>';
+            } else {
+                infoEl.innerHTML = displayStr + ' <span class="status-err">[⚠️ 版本不兼容]</span>';
+            }
+        } else {
+            infoEl.innerHTML = "当前：" + deviceType + ' <span class="status-err">[⚠️ 完全不支持]</span>';
+        }
+    }
+}
+
+// 页面加载解析完毕后自动执行设备检测
+checkDeviceInfo();

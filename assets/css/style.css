@@ -37,6 +37,19 @@ body {
     margin: 0;
 }
 
+/* 新增：设备环境检测信息徽章的样式 */
+.device-badge {
+    margin-top: 15px;
+    font-size: 14px;
+    background-color: #1c1c1e;
+    padding: 8px 16px;
+    border-radius: 20px;
+    display: inline-block;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.status-ok { color: #32d74b; font-weight: bold; margin-left: 5px; }
+.status-err { color: #ff453a; font-weight: bold; margin-left: 5px; }
+
 /* 功能卡片列表布局 (已废弃 Grid 布局，改用 Block 兼容旧设备) */
 .grid {
     display: block;
