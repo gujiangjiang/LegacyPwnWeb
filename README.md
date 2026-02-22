@@ -6,6 +6,7 @@ LegacyPwnWeb 是一个专为 32 位旧版 iOS 设备（iOS 8.0 - 9.3.6）设计�
 
 ## ✨ 核心功能 (Features)
 
+* ℹ️ **设备支持查询:** 首页提供全局独立的设备和 iOS 版本详细兼容列表弹窗。
 * 🔓 **越狱 (Jailbreak):** 一键获取系统 Root 权限并部署 Cydia 运行环境。（支持 A5-A6 设备，内置图文向导、独立证书安装与检查弹窗）
 * ⬇️ **降级伪装 (Downgrade):** 动态修改 `SystemVersion.plist` 以欺骗 OTA 验证机制，实现平滑降级至 iOS 8.4.1。
 * 🧩 **基础环境配置 (Substrate):** 一键安装 Cydia Substrate 与 SafeMode。（作为常规安装失败后的网页端保底方案）

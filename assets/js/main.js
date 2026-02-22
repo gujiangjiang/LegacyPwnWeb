@@ -3,10 +3,18 @@ var currentPayload = '';
 
 // 定义不同操作的弹窗文案配置（使用 var 提升旧版 iOS Safari 兼容性）
 var modalConfigs = {
+    // 新增：独立的设备支持信息弹窗配置，用于首页全局点击展示
+    'supportInfo': {
+        title: '支持的设备与系统',
+        content: '<p><strong>系统版本：</strong>iOS 8.0 - 9.3.6</p><p><strong>A5(X) 设备：</strong>iPhone 4S；iPad 2、3、mini 1；iPod touch 5</p><p><strong>A6(X) 设备：</strong>iPhone 5、5C；iPad 4</p>',
+        cancelText: '关闭',
+        hideConfirm: true, // 新增：标识隐藏确认按钮（仅作信息展示用）
+        showCertBtn: false
+    },
     'jber': {
         title: '越狱前确认',
-        // 优化：重新排版了设备与系统版本支持的说明文本
-        content: '<p><strong>支持的设备和 iOS 版本：</strong><br>系统版本：iOS 8.0 - 9.3.6<br>A5(X) 设备：iPhone 4S；iPad 2、3、mini 1；iPod touch 5<br>A6(X) 设备：iPhone 5、5C；iPad 4</p><p><span class="highlight">注意：</span>iOS 9.3.5 和 9.3.6 并非完全完美越狱，仅支持不完美越狱。</p><p>⚠️ 请确认您已提前安装好了证书！</p>',
+        // 优化：将支持设备信息移出，使文案更精简
+        content: '<p><span class="highlight">注意：</span>iOS 9.3.5 和 9.3.6 并非完全完美越狱，仅支持不完美越狱。</p><p>⚠️ 请确认您已提前安装好了证书！</p>',
         confirmText: '已安装，越狱',
         cancelText: '取消', // 优化：恢复正常的取消文案
         btnStyle: 'modal-btn-confirm',
@@ -17,21 +25,24 @@ var modalConfigs = {
         content: '<p>此功能将 iOS 9.x 的版本号修改伪装，从而实现 OTA 降级至 iOS 8.4.1。</p><p><span class="highlight">注意：</span>执行成功并重启设备后，请前往“设置 - 通用 - 软件更新”检查并下载更新。</p>',
         confirmText: '执行降级',
         cancelText: '取消',
-        btnStyle: 'modal-btn-confirm'
+        btnStyle: 'modal-btn-confirm',
+        showCertBtn: false
     },
     'instdeb': {
         title: '安装 Substrate',
         content: '<p>网页安装 Substrate 与 SafeMode。</p><p><span class="highlight">注意：</span>此方案效果不佳，极度不稳定。仅作为其他方式均失败后的最后保底方案！</p>',
         confirmText: '强制安装',
         cancelText: '取消',
-        btnStyle: 'modal-btn-confirm'
+        btnStyle: 'modal-btn-confirm',
+        showCertBtn: false
     },
     'kdfu': {
         title: '⚠️ KDFU 模式警告',
         content: '<p>警告：进入 KDFU 模式后<span class="highlight">设备将直接黑屏</span>，且只能通过电脑端 odysseusOTA 等专业工具恢复。</p><p>普通用户请勿点击！确认执行？</p>',
         confirmText: '确认进入',
         cancelText: '取消',
-        btnStyle: 'modal-btn-danger'
+        btnStyle: 'modal-btn-danger',
+        showCertBtn: false
     }
 };
 
@@ -49,8 +60,16 @@ function showModal(payloadName) {
         }
         
         document.getElementById('modalContent').innerHTML = config.content;
-        document.getElementById('btnConfirm').innerText = config.confirmText;
-        document.getElementById('btnConfirm').className = 'modal-btn ' + config.btnStyle;
+        
+        // 优化：根据配置判断是否需要隐藏确认按钮
+        var btnConfirm = document.getElementById('btnConfirm');
+        if (config.hideConfirm) {
+            btnConfirm.style.display = 'none';
+        } else {
+            btnConfirm.style.display = 'inline-block';
+            btnConfirm.innerText = config.confirmText;
+            btnConfirm.className = 'modal-btn ' + config.btnStyle;
+        }
         
         // 优化：统一将 btnCancel 的行为设置为关闭弹窗
         document.getElementById('btnCancel').innerText = config.cancelText || '取消';
@@ -82,7 +101,12 @@ function installCert() {
 
 // 弹窗中点击确认后执行核心代码
 function executeCurrentAction() {
-    if (!currentPayload) return;
+    // 优化：如果是纯信息展示弹窗，则不执行任何漏洞脚本
+    if (!currentPayload || currentPayload === 'supportInfo') {
+        closeModal();
+        return;
+    }
+    
     var targetPayload = currentPayload;
     closeModal(); // 先关闭弹窗
 
