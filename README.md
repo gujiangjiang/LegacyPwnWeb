@@ -32,6 +32,7 @@ LegacyPwnWeb/
     ├── certs/                   # 证书文件目录
     │   └── beeg.mobileconfig    # 越狱必备的信任证书文件
     ├── js/
+    │   ├── main.js              # 页面 UI 交互控制与弹窗逻辑脚本 (独立解耦)
     │   └── wkloader.js          # 核心 WebKit 漏洞加载器 (支持动态载荷路由)
     ├── core/                    # 共享底层 Exploit 跳板与补丁 (固定不变)
     │   ├── loader8.b64
