@@ -47,8 +47,9 @@ body {
     display: inline-block;
     border: 1px solid rgba(255,255,255,0.1);
 }
-.status-ok { color: #32d74b; font-weight: bold; margin-left: 5px; }
-.status-err { color: #ff453a; font-weight: bold; margin-left: 5px; }
+/* 优化：增加了 cursor: pointer，提示用户可以点击 */
+.status-ok { color: #32d74b; font-weight: bold; margin-left: 5px; cursor: pointer; }
+.status-err { color: #ff453a; font-weight: bold; margin-left: 5px; cursor: pointer; }
 
 /* 功能卡片列表布局 (已废弃 Grid 布局，改用 Block 兼容旧设备) */
 .grid {

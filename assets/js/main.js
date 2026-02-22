@@ -162,17 +162,19 @@ function checkDeviceInfo() {
     }
 
     // 3. 渲染结果到页面（注：受限于浏览器 UA 机制，无法精准区分具体机型如 iPhone 4S 还是 5）
+    // 优化：将详情弹窗触发事件绑定到状态标签上
     var infoEl = document.getElementById("deviceInfo");
     if (infoEl) {
+        var clickAction = ' onclick="showModal(\'supportInfo\')"';
         if (isIOS) {
             var displayStr = "当前：" + deviceType + " (iOS " + osVersion + ")";
             if (isSupported) {
-                infoEl.innerHTML = displayStr + ' <span class="status-ok">[✅ 系统兼容]</span>';
+                infoEl.innerHTML = displayStr + ' <span class="status-ok"' + clickAction + '>[✅ 系统兼容 ℹ️]</span>';
             } else {
-                infoEl.innerHTML = displayStr + ' <span class="status-err">[⚠️ 版本不兼容]</span>';
+                infoEl.innerHTML = displayStr + ' <span class="status-err"' + clickAction + '>[⚠️ 版本不兼容 ℹ️]</span>';
             }
         } else {
-            infoEl.innerHTML = "当前：" + deviceType + ' <span class="status-err">[⚠️ 完全不支持]</span>';
+            infoEl.innerHTML = "当前：" + deviceType + ' <span class="status-err"' + clickAction + '>[⚠️ 完全不支持 ℹ️]</span>';
         }
     }
 }
